@@ -1,0 +1,124 @@
+/* Section 1 - Hero Section CSS */
+.why-section1-hero {
+  position: relative;
+  padding: 100px 24px;
+  background: var(--deep);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  min-height: 80vh;
+}
+
+/* 细砂纹理背景叠加层 */
+.why-section1-hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: radial-gradient(rgba(10, 78, 203, 0.05) 1px, transparent 0);
+  background-size: 24px 24px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* 蓝紫背景呼吸光晕 */
+.why-section1-bg-glow {
+  position: absolute;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, var(--glow-strong) 0%, rgba(0, 102, 204, 0.05) 70%, transparent 100%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  filter: blur(80px);
+  animation: why-section1-pulse 10s infinite alternate ease-in-out;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes why-section1-pulse {
+  0% {
+    transform: translate(-50%, -50%) scale(0.9);
+    opacity: 0.7;
+  }
+  100% {
+    transform: translate(-50%, -50%) scale(1.1);
+    opacity: 1;
+  }
+}
+
+.why-section1-container {
+  position: relative;
+  max-width: 1340px;
+  width: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.why-section1-content {
+  max-width: 850px;
+  width: 100%;
+}
+
+/* 标题渐变 */
+.why-section1-title {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1.25;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.why-section1-subtitle {
+  font-size: 1.25rem;
+  color: var(--text-dim);
+  margin-bottom: 48px;
+  line-height: 1.6;
+  max-width: 650px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* 数据看板小卡片 */
+.why-section1-cards {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-bottom: 48px;
+  width: 100%;
+}
+
+.why-section1-card {
+  background: var(--surface);
+  border: 1px solid var(--border-glass);
+  border-radius: 16px;
+  padding: 24px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.why-section1-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--blue-bright);
+}
+
+.why-section1-card-val {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--blue);
+  margin-bottom: 4px;
+}
+
+.why-section1-card-lbl {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
