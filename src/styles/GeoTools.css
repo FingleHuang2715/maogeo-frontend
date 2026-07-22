@@ -1,0 +1,327 @@
+/* ============================================================================
+   GeoTools.css - GEO 全效工具矩阵样式表
+   ============================================================================ */
+
+.geo-tools-root {
+  width: 100%;
+  min-height: 100vh;
+  background: #090b14;
+  color: #ffffff;
+  font-family: 'Outfit', 'PingFang SC', sans-serif;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Hero 轮播区 */
+.geo-tools-hero-slider {
+  position: relative;
+  width: 100%;
+  min-height: 85vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 100px 24px 60px;
+  box-sizing: border-box;
+}
+
+.geo-tools-slider-container {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.geo-tools-slide-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 0.8s ease-in-out;
+  background-color: #090b14;
+}
+
+.geo-tools-slide-bg.active {
+  opacity: 1;
+}
+
+/* 蒙层与光晕 */
+.geo-tools-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  background: radial-gradient(circle at 30% 50%, rgba(9, 11, 20, 0.7) 0%, rgba(9, 11, 20, 0.95) 100%);
+  pointer-events: none;
+}
+
+.geo-tools-content-wrapper {
+  position: relative;
+  z-index: 3;
+  width: 100%;
+  max-width: 1340px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 280px;
+  gap: 60px;
+  align-items: center;
+}
+
+@media (max-width: 992px) {
+  .geo-tools-content-wrapper {
+    grid-template-columns: 1fr;
+    gap: 40px;
+  }
+}
+
+.geo-tools-text-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+/* 数字计数器 */
+.geo-tools-counter {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  font-family: monospace;
+  font-size: 24px;
+  font-weight: 800;
+  color: #0A4ECB;
+  margin-bottom: 20px;
+}
+
+.geo-tools-number-window {
+  height: 36px;
+  overflow: hidden;
+  position: relative;
+}
+
+.geo-tools-numbers {
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.geo-tools-numbers span {
+  height: 36px;
+  line-height: 36px;
+  color: #0A4ECB;
+}
+
+.geo-tools-total-count {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.geo-tools-title {
+  font-size: clamp(32px, 4vw, 56px);
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.geo-tools-subtitle {
+  font-size: clamp(18px, 2vw, 24px);
+  font-weight: 600;
+  color: #0A4ECB;
+  margin: 0 0 24px 0;
+  line-height: 1.4;
+}
+
+.geo-tools-desc {
+  font-size: 16px;
+  line-height: 1.8;
+  color: rgba(255, 255, 255, 0.7);
+  margin: 0 0 40px 0;
+  max-width: 680px;
+}
+
+.geo-tools-actions {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.geo-tools-cta-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px 36px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #0A4ECB 0%, #0066cc 100%);
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: none;
+  box-shadow: 0 8px 30px rgba(10, 78, 203, 0.4);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.geo-tools-cta-btn:hover {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: 0 12px 40px rgba(10, 78, 203, 0.6);
+}
+
+/* 右侧控制区 */
+.geo-tools-nav-col {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 30px;
+}
+
+@media (max-width: 992px) {
+  .geo-tools-nav-col {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+}
+
+.geo-tools-controls {
+  display: flex;
+  gap: 12px;
+}
+
+.geo-tools-nav-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  font-size: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.geo-tools-nav-btn:hover {
+  background: #0A4ECB;
+  border-color: #0A4ECB;
+  transform: scale(1.08);
+}
+
+.geo-tools-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.geo-tools-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.geo-tools-dot.active {
+  width: 32px;
+  border-radius: 6px;
+  background: #0A4ECB;
+}
+
+/* Section 2 */
+.geo-tools-sec2 {
+  padding: 100px 24px;
+  background: #0f1222;
+  position: relative;
+}
+
+.geo-tools-sec2-container {
+  max-width: 1340px;
+  margin: 0 auto;
+}
+
+.geo-tools-sec2-header {
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto 60px auto;
+}
+
+.geo-tools-sec2-tag {
+  display: inline-block;
+  padding: 6px 18px;
+  border-radius: 30px;
+  background: rgba(10, 78, 203, 0.15);
+  border: 1px solid rgba(10, 78, 203, 0.3);
+  color: #0A4ECB;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.geo-tools-sec2-title {
+  font-size: 38px;
+  font-weight: 800;
+  margin-bottom: 16px;
+  color: #ffffff;
+}
+
+.geo-tools-sec2-subtitle {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  line-height: 1.6;
+}
+
+.geo-tools-sec2-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 30px;
+}
+
+@media (max-width: 992px) {
+  .geo-tools-sec2-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.geo-tools-sec2-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 20px;
+  padding: 40px 30px;
+  transition: all 0.3s ease;
+}
+
+.geo-tools-sec2-card:hover {
+  transform: translateY(-6px);
+  background: rgba(10, 78, 203, 0.08);
+  border-color: rgba(10, 78, 203, 0.3);
+}
+
+.geo-tools-sec2-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: #0A4ECB;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.geo-tools-sec2-card h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0 0 14px 0;
+  color: #ffffff;
+}
+
+.geo-tools-sec2-card p {
+  font-size: 14px;
+  line-height: 1.7;
+  color: rgba(255, 255, 255, 0.6);
+  margin: 0;
+}
