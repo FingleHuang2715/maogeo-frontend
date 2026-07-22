@@ -55,6 +55,7 @@
   color: #dc2626;
   letter-spacing: 0.5px;
 }
+
 .faq-cosmic__badge-icon {
   font-size: 14px;
 }
@@ -100,6 +101,7 @@
     0 1px 3px rgba(0, 0, 0, 0.04);
   transition: box-shadow 0.3s ease, border-color 0.3s ease;
 }
+
 .faq-cosmic__item:hover {
   box-shadow:
     0 8px 32px rgba(10, 78, 203, 0.12),
@@ -127,9 +129,11 @@
   -webkit-appearance: none;
   appearance: none;
 }
+
 .faq-cosmic__summary::-webkit-details-marker {
   display: none;
 }
+
 .faq-cosmic__summary::marker {
   display: none;
   content: '';
@@ -139,9 +143,11 @@
   background: linear-gradient(135deg, rgba(10, 78, 203, 0.05), rgba(0, 102, 204, 0.03));
   border-bottom: 1px solid rgba(10, 78, 203, 0.1);
 }
+
 .faq-cosmic__summary:hover {
   background: rgba(10, 78, 203, 0.04);
 }
+
 .faq-cosmic__summary:focus-visible {
   outline: 2px solid rgba(10, 78, 203, 0.4);
   outline-offset: -2px;
@@ -171,6 +177,7 @@
   color: var(--text, #1e1b2e);
   line-height: 1.5;
 }
+
 .faq-cosmic__item[open] .faq-cosmic__q-text {
   color: var(--blue, #0A4ECB);
 }
@@ -192,6 +199,7 @@
   position: relative;
   overflow: hidden;
 }
+
 .faq-cosmic__item[open] .faq-cosmic__q-toggle {
   background: linear-gradient(135deg, #0A4ECB, #0066cc);
   border-color: transparent;
@@ -205,6 +213,7 @@
   color: var(--blue, #0A4ECB);
   transition: opacity 0.2s, transform 0.3s;
 }
+
 .faq-cosmic__toggle-minus {
   display: none;
   align-items: center;
@@ -212,9 +221,11 @@
   color: #fff;
   position: absolute;
 }
+
 .faq-cosmic__item[open] .faq-cosmic__toggle-plus {
   display: none;
 }
+
 .faq-cosmic__item[open] .faq-cosmic__toggle-minus {
   display: inline-flex;
 }
@@ -222,6 +233,7 @@
 .faq-cosmic__answer {
   overflow: hidden;
 }
+
 .faq-cosmic__answer-inner {
   padding: 18px 22px 22px;
   display: flex;
@@ -229,6 +241,7 @@
   gap: 10px;
   animation: faq-answer-in 0.28s ease;
 }
+
 @keyframes faq-answer-in {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
@@ -240,6 +253,7 @@
   color: var(--text-dim, #4a4a6a);
   margin: 0;
 }
+
 .faq-cosmic__answer-inner p strong {
   color: var(--text, #1e1b2e);
   font-weight: 600;
@@ -268,15 +282,18 @@
   margin-top: 4px;
   box-shadow: 0 4px 20px rgba(10, 78, 203, 0.08);
 }
+
 .faq-cosmic__cta-hint-icon {
   font-size: 28px;
   flex-shrink: 0;
 }
+
 .faq-cosmic__cta-hint-text {
   font-size: 13.5px;
   line-height: 1.7;
   color: var(--text-dim, #4a4a6a);
 }
+
 .faq-cosmic__cta-hint-text strong {
   color: var(--blue, #0A4ECB);
   font-weight: 700;
