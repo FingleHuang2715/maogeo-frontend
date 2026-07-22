@@ -1,247 +1,159 @@
-const GRAPHQL_ENDPOINT = "https://post.maogeo.top/graphql";
+import fetch from "node-fetch";
+
+export interface WPPost {
+  id: number;
+  title: string;
+  slug: string;
+  excerpt: string;
+  content: string;
+  date: string;
+  featuredImage?: string;
+  categories?: { id: number; name: string; slug: string }[];
+  tags?: { id: number; name: string; slug: string }[];
+}
 
 export interface WPCategory {
+  id: number;
   name: string;
   slug: string;
-  count?: number;
+  count: number;
 }
 
 export interface WPTag {
+  id: number;
   name: string;
   slug: string;
-  count?: number;
+  count: number;
 }
 
-export interface WPPost {
-  id: string;
-  title: string;
-  slug: string;
-  date: string;
-  excerpt: string;
-  content?: string;
-  isSticky?: boolean;
-  categories?: {
-    nodes: WPCategory[];
-  };
-  tags?: {
-    nodes: WPTag[];
-  };
-  featuredImage?: {
-    node: {
-      sourceUrl: string;
-    };
-  };
-}
+const WP_API_URL = "https://post.maogeo.top/wp-json/wp/v2";
 
-export interface PaginatedPosts {
-  posts: WPPost[];
-  pageInfo: {
-    hasNextPage: boolean;
-    hasPreviousPage: boolean;
-    endCursor: string | null;
-    startCursor: string | null;
-  };
-}
-
-export async function fetchAPI(query: string, variables: Record<string, any> = {}) {
-  const headers = { "Content-Type": "application/json" };
-  const res = await fetch(GRAPHQL_ENDPOINT, {
-    method: "POST",
-    headers,
-    body: JSON.stringify({
-      query,
-      variables,
-    }),
-    next: { revalidate: 60 },
-  });
-
-  const json = await res.json();
-  if (json.errors) {
-    console.error("GraphQL Errors:", json.errors);
-    throw new Error("Failed to fetch API");
-  }
-  return json.data;
-}
-
-export async function getAllCategories(): Promise<WPCategory[]> {
-  try {
-    const data = await fetchAPI(`
-      query GetAllCategories {
-        categories(first: 20, where: { hideEmpty: true }) {
-          nodes {
-            name
-            slug
-            count
-          }
-        }
-      }
-    `);
-    return data.categories.nodes;
-  } catch (e) {
-    console.error("Error fetching categories:", e);
-    return [];
-  }
-}
-
-export async function getAllTags(): Promise<WPTag[]> {
-  try {
-    const data = await fetchAPI(`
-      query GetAllTags {
-        tags(first: 20, where: { hideEmpty: true }) {
-          nodes {
-            name
-            slug
-            count
-          }
-        }
-      }
-    `);
-    return data.tags.nodes;
-  } catch (e) {
-    console.error("Error fetching tags:", e);
-    return [];
-  }
-}
-
-export async function getPaginatedPosts({
-  first = 10,
-  after = null,
-  last = null,
-  before = null,
-  query = "",
+export async function getPosts({
+  page = 1,
+  perPage = 8,
   categorySlug = "",
   tagSlug = "",
 }: {
-  first?: number | null;
-  after?: string | null;
-  last?: number | null;
-  before?: string | null;
-  query?: string;
+  page?: number;
+  perPage?: number;
   categorySlug?: string;
   tagSlug?: string;
-}): Promise<PaginatedPosts> {
+} = {}): Promise<{ posts: WPPost[]; totalPages: number; totalPosts: number }> {
   try {
-    const filters: string[] = [];
-    if (query && query.trim().length > 0) {
-      filters.push(`search: "${query}"`);
-    }
-    if (categorySlug && categorySlug.trim().length > 0) {
-      filters.push(`categoryName: "${categorySlug}"`);
-    }
-    if (tagSlug && tagSlug.trim().length > 0) {
-      filters.push(`tag: "${tagSlug}"`);
-    }
-    
-    const whereClause = filters.length > 0 ? `, where: { ${filters.join(', ')} }` : '';
-    
-    let args = '';
-    if (first !== null) args += `first: ${first}, `;
-    if (after !== null) args += `after: "${after}", `;
-    if (last !== null) args += `last: ${last}, `;
-    if (before !== null) args += `before: "${before}", `;
-    
-    if (args.endsWith(', ')) args = args.slice(0, -2);
-    
-    const data = await fetchAPI(`
-      query GetPaginatedPosts {
-        posts(${args} ${whereClause}) {
-          pageInfo {
-            hasNextPage
-            hasPreviousPage
-            endCursor
-            startCursor
-          }
-          nodes {
-            id
-            title
-            slug
-            date
-            excerpt
-            isSticky
-            categories {
-              nodes {
-                name
-                slug
-              }
-            }
-            tags {
-              nodes {
-                name
-                slug
-              }
-            }
-            featuredImage {
-              node {
-                sourceUrl
-              }
-            }
-          }
-        }
+    let url = `${WP_API_URL}/posts?_embed&page=${page}&per_page=${perPage}`;
+
+    if (categorySlug) {
+      const catsRes = await fetch(`${WP_API_URL}/categories?slug=${categorySlug}`);
+      const cats = (await catsRes.json()) as WPCategory[];
+      if (cats && cats.length > 0) {
+        url += `&categories=${cats[0].id}`;
       }
-    `);
-    
-    return {
-      posts: data.posts.nodes,
-      pageInfo: data.posts.pageInfo,
-    };
+    }
+
+    if (tagSlug) {
+      const tagsRes = await fetch(`${WP_API_URL}/tags?slug=${tagSlug}`);
+      const tags = (await tagsRes.json()) as WPTag[];
+      if (tags && tags.length > 0) {
+        url += `&tags=${tags[0].id}`;
+      }
+    }
+
+    const res = await fetch(url);
+    if (!res.ok) {
+      return { posts: [], totalPages: 0, totalPosts: 0 };
+    }
+
+    const totalPages = parseInt(res.headers.get("X-WP-TotalPages") || "1", 10);
+    const totalPosts = parseInt(res.headers.get("X-WP-Total") || "0", 10);
+
+    const rawPosts = (await res.json()) as any[];
+
+    const posts: WPPost[] = rawPosts.map((post) => {
+      const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+      const categories = post._embedded?.["wp:term"]?.[0]?.map((c: any) => ({
+        id: c.id,
+        name: c.name,
+        slug: c.slug,
+      }));
+      const tags = post._embedded?.["wp:term"]?.[1]?.map((t: any) => ({
+        id: t.id,
+        name: t.name,
+        slug: t.slug,
+      }));
+
+      return {
+        id: post.id,
+        title: post.title.rendered,
+        slug: post.slug,
+        excerpt: post.excerpt.rendered.replace(/<[^>]+>/g, "").slice(0, 160) + "...",
+        content: post.content.rendered,
+        date: new Date(post.date).toLocaleDateString("zh-CN"),
+        featuredImage: featuredMedia || "https://cdn.maogeo.top/wp-content/uploads/2026/07/20260721010110868.webp",
+        categories,
+        tags,
+      };
+    });
+
+    return { posts, totalPages, totalPosts };
   } catch (error) {
-    console.error("Error fetching paginated posts:", error);
-    return {
-      posts: [],
-      pageInfo: {
-        hasNextPage: false,
-        hasPreviousPage: false,
-        endCursor: null,
-        startCursor: null,
-      },
-    };
+    console.error("Error fetching WP posts:", error);
+    return { posts: [], totalPages: 0, totalPosts: 0 };
   }
 }
 
 export async function getPostBySlug(slug: string): Promise<WPPost | null> {
   try {
-    const data = await fetchAPI(`
-      query GetPostBySlug($id: ID!) {
-        post(id: $id, idType: SLUG) {
-          id
-          title
-          slug
-          date
-          content
-          isSticky
-          categories {
-            nodes {
-              name
-              slug
-            }
-          }
-          tags {
-            nodes {
-              name
-              slug
-            }
-          }
-          featuredImage {
-            node {
-              sourceUrl
-            }
-          }
-        }
-      }
-    `, { id: slug });
-    return data.post;
+    const res = await fetch(`${WP_API_URL}/posts?_embed&slug=${slug}`);
+    if (!res.ok) return null;
+    const rawPosts = (await res.json()) as any[];
+    if (rawPosts.length === 0) return null;
+
+    const post = rawPosts[0];
+    const featuredMedia = post._embedded?.["wp:featuredmedia"]?.[0]?.source_url;
+    const categories = post._embedded?.["wp:term"]?.[0]?.map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      slug: c.slug,
+    }));
+    const tags = post._embedded?.["wp:term"]?.[1]?.map((t: any) => ({
+      id: t.id,
+      name: t.name,
+      slug: t.slug,
+    }));
+
+    return {
+      id: post.id,
+      title: post.title.rendered,
+      slug: post.slug,
+      excerpt: post.excerpt.rendered.replace(/<[^>]+>/g, "").slice(0, 160) + "...",
+      content: post.content.rendered,
+      date: new Date(post.date).toLocaleDateString("zh-CN"),
+      featuredImage: featuredMedia || "https://cdn.maogeo.top/wp-content/uploads/2026/07/20260721010110868.webp",
+      categories,
+      tags,
+    };
   } catch (error) {
-    console.error(`Error fetching post by slug "${slug}":`, error);
+    console.error(`Error fetching post by slug ${slug}:`, error);
     return null;
   }
 }
 
-export async function getRelatedPosts(categorySlug: string, excludeId: string, limit = 3): Promise<WPPost[]> {
+export async function getCategories(): Promise<WPCategory[]> {
   try {
-    const data = await getPaginatedPosts({ first: limit + 1, categorySlug });
-    return data.posts.filter(p => p.id !== excludeId).slice(0, limit);
-  } catch (e) {
-    console.error("Error fetching related posts:", e);
+    const res = await fetch(`${WP_API_URL}/categories?per_page=100&hide_empty=true`);
+    if (!res.ok) return [];
+    return (await res.json()) as WPCategory[];
+  } catch {
+    return [];
+  }
+}
+
+export async function getTags(): Promise<WPTag[]> {
+  try {
+    const res = await fetch(`${WP_API_URL}/tags?per_page=100&hide_empty=true`);
+    if (!res.ok) return [];
+    return (await res.json()) as WPTag[];
+  } catch {
     return [];
   }
 }
